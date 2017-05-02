@@ -1,0 +1,115 @@
+#:kivy 1.9.1
+# Reference kivygui.py
+#: import main kivygui
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+#: import ListItemButton kivy.uix.listview.ListItemButton
+
+ScreenManager:
+	LoginScreen:
+	MainScreen:
+
+<LoginScreen>:
+	name: 'loginscreen'
+	BoxLayout:
+		id: login_layout
+		orientation: 'vertical'
+		padding: [10,50,10,50]
+		spacing: 50
+		
+		Label:
+			text: 'Welcome'
+			font_size: 32
+		
+		BoxLayout:
+			orientation: 'vertical'
+			
+			Label:
+				text: 'Login'
+				font_size: 18
+				halign: 'left'
+				text_size: root.width-20, 20
+			
+			TextInput:
+				id: login
+				multiline: False
+				font_size: 28
+				
+		BoxLayout:
+			orientation: 'vertical'
+			
+			Label:
+				text: 'Password'
+				halign: 'left'
+				font_size: 18
+				text_size: root.width-20, 20
+				
+			TextInput:
+				id: password
+				multiline: False
+				password: True
+				font_size: 28
+			
+		Button:
+			text: "Go to Screen 2"
+			on_release:
+				root.do_login(login.text, password.text)
+
+<MainScreen>:
+	name: 'mainscreen'
+	orientation: 'vertical'
+	name_text_input: name
+	p_number_text_input: p_number
+	addresslist: addresslist_view
+	padding: 10
+	spacing: 10
+	
+	BoxLayout:
+		id: main_layout
+		orientation: 'vertical'
+		padding: [10,50,10,50]
+		spacing: 50
+		
+		BoxLayout:
+			size_hint_y: None
+			height: "40dp"
+			
+			Label:
+				text: "Name"
+			TextInput:
+				id: name
+			Label:
+				text: "Phone Number"
+			TextInput:
+				id: p_number
+		
+		BoxLayout:
+			size_hint_y: None
+			height: "40dp"
+			Button:
+				text: "Submit"
+				size_hint_x: 15
+				on_press:
+					root.submit_entry()
+			Button:
+				text: "Delete"
+				size_hint_x: 15
+				on_press:
+					root.delete_entry()
+			Button:
+				text: "Update"
+				size_hint_x: 15
+				on_press:
+					root.update_entry()
+					
+		ListView:
+			id: addresslist_view
+			adapter:
+				ListAdapter(data=root.refresh_data(), cls=main.AddressListButton)
+			
+		
+		Button:
+			text: "Go to Screen 1"
+			on_release:
+				root.manager.transition.direction='left'
+				root.manager.transition.duration=0
+				root.manager.current='loginscreen'
