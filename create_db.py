@@ -1,33 +1,44 @@
 #Address Book Program
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
-#This is a test
-
 Base = declarative_base()
 
-#Contact Model
-class Contact(Base):
-	__tablename__ = 'contact'
+#Password Model
+class Passwords(Base):
+	__tablename__ = 'passwords'
 	id = Column(Integer, primary_key=True)
-	name = Column(String(250))
-	p_number = Column(String(100))
-	#~ email = Column(String(250))
+	site = Column(String(100))
+	site_username = Column(String(100))
+	site_password = Column(String(100))
+	user_id = Column(Integer, ForeignKey('user.id'))
 	
-	def __init__(self, name, p_number):
-		self.name = name
-		self.p_number = p_number
-		
-	#~ def update_name(self, new_name):
-		#~ self.name = new_name
-		#~ 
-	#~ def update_p_number(self, new_p_number):
-		#~ self.p_number = new_p_number
+	def __init__(self, site, site_username, site_password, user_id):
+		self.site = site
+		self.site_username = site_username
+		self.site_password = site_password
+		self.user_id = user_id
 		
 	def __repr__(self):
-		return "ID: %d, Name: %s, Phone Number: %s" % (self.id, self.name, self.p_number)
+		return "ID: %d, Site: %s, Username: %s, Password: %s" % (self.id, self.site, self.username, self.password)
+		
+class User(Base):
+	__tablename__ = 'user'
+	id = Column(Integer, primary_key=True)
+	user_username = Column(String(100), unique=True)
+	user_password = Column(String(100))
+	passwords = relationship('Passwords', backref='user', lazy='dynamic')
+	
+	def __init__(self, user_username, user_password):
+		self.user_username = user_username
+		self.user_password = user_password
+		
+	#Should probably remove eventually
+	def __repr__(self):
+		return "username: %s, password: %s" % (self.user_username, self.user_password)
 
-engine = create_engine('sqlite:///addressbook.db')
+engine = create_engine('sqlite:///passwords.sqlite')
 
 Base.metadata.create_all(engine)
