@@ -2,7 +2,7 @@ import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from create_db import Contact, Base
+from models import Contact, Base
 
 #Set Up Session
 engine = create_engine('sqlite:///addressbook.db')

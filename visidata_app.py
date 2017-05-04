@@ -1,12 +1,19 @@
-#!/usr/bin/env python3
+#!p3_vir_env/bin/python3
 
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import base64
+import os
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import visidata
 import getpass
 
-from create_db import Passwords, User, Base
+from models import Passwords, User, Base
+
+#TODO: generate requirements.txt when project is finished
 
 #Look into database migration
 
@@ -21,6 +28,7 @@ engine = create_engine('sqlite:///passwords.sqlite')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
 
 def validate_user(input_un, input_pass):
 	try:
@@ -56,8 +64,6 @@ def main():
 	super_secret_password = getpass.getpass()
 	if validate_user(current_user_username, super_secret_password):
 		current_user = session.query(User).filter_by(user_username=current_user_username).first()
-		print('Current_user from current_user_username: ', current_user)
-		print('User.id : ', current_user.id)
 		vs = AddressBookSheet(current_user.id)
 		visidata.run([vs])
 	else:

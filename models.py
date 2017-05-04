@@ -1,12 +1,12 @@
-#Address Book Program
-from sqlalchemy import Column, Integer, String, ForeignKey
+#Password Saver Models
+from sqlalchemy import Column, Integer, String, ForeignKey, Binary
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
 Base = declarative_base()
 
-#Password Model
+
 class Passwords(Base):
 	__tablename__ = 'passwords'
 	id = Column(Integer, primary_key=True)
@@ -23,7 +23,8 @@ class Passwords(Base):
 		
 	def __repr__(self):
 		return "ID: %d, Site: %s, Username: %s, Password: %s" % (self.id, self.site, self.username, self.password)
-		
+
+
 class User(Base):
 	__tablename__ = 'user'
 	id = Column(Integer, primary_key=True)
