@@ -30,11 +30,13 @@ class User(Base):
 	id = Column(Integer, primary_key=True)
 	user_username = Column(String(100), unique=True)
 	user_password = Column(String(100))
+	user_salt = Column(String(100))
 	passwords = relationship('Passwords', backref='user', lazy='dynamic')
 	
-	def __init__(self, user_username, user_password):
+	def __init__(self, user_username, user_password, user_salt):
 		self.user_username = user_username
 		self.user_password = user_password
+		self.user_salt = user_salt
 		
 	#Should probably remove eventually
 	def __repr__(self):
