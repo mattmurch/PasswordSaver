@@ -113,11 +113,12 @@ class AddressBookSheet(visidata.SqliteSheet):
 	def __init__(self, current_user, current_user_password):
 		super().__init__("passwords", visidata.Path("passwords.sqlite"), "passwords")
 		self.current_user = current_user
+		self.current_user_id = current_user.id
 		self.current_user_password = current_user_password
-		self.current_key = generate_key(self.current_user_password, self.current_user.user_salt)
-		self.command("A", "add_entry(input('Site: '), input('Username: '), input('Password: '), self.current_user.id)", "Add A New Entry")
+		self.current_key = generate_key(current_user_password, current_user.user_salt)
+		self.command("A", "add_entry(input('Site: '), input('Username: '), input('Password: '), current_user_id)", "Add A New Entry")
 		self.command("d", "delete_entry(cursorRow[0])", "Delete Current Entry")
-		self.command('e', 'edit_field(self.current_user.id)', 'Edit This Cell')
+		self.command('e', 'edit_field(current_user_id)', 'Edit This Cell')
 
 
 	#Replace this funtion with one to call in visitdata.Column getter and put needed variables in __init__ as class variables
