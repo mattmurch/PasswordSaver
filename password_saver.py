@@ -6,6 +6,7 @@ import getpass
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import exists
 import base64
 import bcrypt
 from cryptography.fernet import Fernet
@@ -25,8 +26,6 @@ pr.enable()
 #____________________________________________
 
 #TODO before deployment:
-
-#add if statement or try except statement if a user tries to create a username that is already taken
 
 #prevent user from manually accessing the database to delete things. Even though they cannot read passwords, they can still add and delete and edit stuff
 #       Maybe do this by making the database only readable/writable by this application
@@ -89,21 +88,25 @@ def validate_user(input_un, input_pass):
         return False
 
 
-def create_user(new_username, new_password):
-    salt = os.urandom(16)
-    hashed_password = hash_pw(new_password)
-    new_user = User(new_username, hashed_password, salt)
-    session.add(new_user)
-    session.commit()
+def create_user():
+    new_username = input('New Username: ')
+    if session.query(exists().where(User.user_username==new_username)).scalar():
+        print('This username is already taken. Please use a different username.')
+        create_user()
+    else:
+        new_password = getpass.getpass()
+        salt = os.urandom(16)
+        hashed_password = hash_pw(new_password)
+        new_user = User(new_username, hashed_password, salt)
+        session.add(new_user)
+        session.commit()
 
 
 def main():
     print("Enter 'New' To Create New Account")
     current_user_username = input('Username: ')
     if current_user_username == 'New' or current_user_username == 'new':
-        new_username = input('New Username: ')
-        new_password = getpass.getpass()
-        create_user(new_username, new_password)
+        create_user()
         print('You have been registered!')
         current_user_username = input('Username: ')
     current_user_password = getpass.getpass()
