@@ -6,6 +6,8 @@ Local encrypted database application designed for storing website usernames and 
 This application uses bcrypt to store hashed passwords for user login.
 Once logged in, information is encrypted with PBKDF2 before it enters the database.
 
+![PasswordSaverExample](https://user-images.githubusercontent.com/13307633/27192135-35fe1be4-51c8-11e7-8c02-33936d9b4d21.png)
+
 ## Getting Started
 
 ### Prerequisites
