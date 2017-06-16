@@ -4,7 +4,6 @@ import os
 import getpass
 import base64
 
-import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists
