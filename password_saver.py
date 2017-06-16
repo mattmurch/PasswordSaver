@@ -2,12 +2,12 @@
 
 import os
 import getpass
+import base64
 
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists
-import base64
 import bcrypt
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
@@ -15,25 +15,8 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import visidata
 
-from models import Passwords, User, Base
 
-#____________________________________________
-#FOR PROFILING PURPOSES
-#call snakeviz cProfile.prof in terminal to view results of profile
-import cProfile, pstats, io
-pr = cProfile.Profile()
-pr.enable()
-#____________________________________________
-
-#TODO before deployment:
-
-#prevent user from manually accessing the database to delete things. Even though they cannot read passwords, they can still add and delete and edit stuff
-#       Maybe do this by making the database only readable/writable by this application
-
-
-#MUST RUN THIS LINE IN COMMANDLINE BEFORE CALLING THIS FILE
-#export PYTHONPATH=~/Desktop/visidata/
-
+from models.models import Passwords, User, Base
 
 #Set Up Session
 engine = create_engine('sqlite:///passwords.sqlite')
@@ -131,7 +114,6 @@ class AddressBookSheet(visidata.SqliteSheet):
         self.command("d", "delete_entry(cursorRow[0])", "Delete Current Entry")
         self.command('e', 'edit_field(current_user_id)', 'Edit This Cell')
 
-    # TODO: Replace this funtion with one to call in visitdata.Column getter and put needed variables in __init__ as class variables
     def make_decrypt(self, user, item_number):
         def temp_decrypt(r, self=self, salt=self.current_user.user_salt, item_number=item_number):
             return decrypt(r[item_number], self.current_key)
@@ -176,13 +158,3 @@ class AddressBookSheet(visidata.SqliteSheet):
 
 if __name__=='__main__':
     main()
-    
-#_____________________
-#MORE PROFILING
-pr.disable()
-s = io.StringIO()
-sortby = 'time'
-ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-ps.dump_stats("cProfile.prof")
-print(s.getvalue())
-#_____________________
