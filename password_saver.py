@@ -30,10 +30,7 @@ def hash_pw(unhashed):
 
 def verify_hash(password, hashed):
     """Takes a password and a hash. Returns if the hashed password matches the hash."""
-    if bcrypt.hashpw(password.encode('UTF-8'), hashed) == hashed:
-        return True
-    else:
-        return False
+    return hashed == bcrypt.hashpw(password.encode('UTF-8'), hashed)
 
 
 def generate_key(password, salt):
@@ -45,14 +42,12 @@ def generate_key(password, salt):
 
 def encrypt(unencrypted, key):
     """Takes a string and a key. Returns the encrypted string."""
-    f = Fernet(key)
-    return f.encrypt(unencrypted.encode('UTF-8'))
+    return Fernet(key).encrypt(unencrypted.encode('UTF-8'))
 
 
 def decrypt(undecrypted, key):
     """Takes an encrypted string and the key that string was encrypted with. Returns the decrypted string."""
-    f = Fernet(key)
-    return f.decrypt(undecrypted).decode('UTF-8')
+    return Fernet(key).decrypt(undecrypted).decode('UTF-8')
 
 
 def validate_user(input_un, input_pass):
@@ -62,10 +57,7 @@ def validate_user(input_un, input_pass):
     try:
         user = session.query(User).filter_by(user_username=input_un).first()
         hashed_password = user.user_password
-        if verify_hash(input_pass, hashed_password):
-            return True
-        else:
-            return False
+        return verify_hash(input_pass, hashed_password):
     except:
         print('Validate Failed')
         return False
@@ -80,7 +72,7 @@ def create_user():
     if session.query(exists().where(User.user_username==new_username)).scalar():
         print('This username is already taken. Please use a different username.')
         create_user()
-    elif new_username == 'New' or new_username == 'new':
+    elif new_username in ['New', 'new']:
         print('You cannot have that username. Pick a different one.')
         create_user()
     else:
@@ -99,7 +91,7 @@ def main():
     """
     print("Enter 'New' To Create New Account")
     current_user_username = input('Username: ')
-    if current_user_username == 'New' or current_user_username == 'new':
+    if current_user_username in ['New', 'new']:
         create_user()
         print('You have been registered!')
         current_user_username = input('Username: ')
