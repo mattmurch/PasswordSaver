@@ -9,6 +9,9 @@ Base = declarative_base()
 
 
 class Passwords(Base):
+    """Builds a table with the following columns: id, site, username, password, and user id.
+    This stores the website login information of each user.
+    """
     __tablename__ = 'passwords'
     id = Column(Integer, primary_key=True)
     site = Column(String(100))
@@ -24,6 +27,10 @@ class Passwords(Base):
 
 
 class User(Base):
+    """Builds a table with the following columns: id, username, password, and salt.
+    This table also contain a reference to the passwords table.
+    This stores data for the program users.
+    """
     __tablename__ = 'user'
     id = Column(Integer, primary_key=True)
     user_username = Column(String(100), unique=True)
