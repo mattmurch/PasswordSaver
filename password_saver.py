@@ -72,7 +72,7 @@ def create_user():
     if session.query(exists().where(User.user_username==new_username)).scalar():
         print('This username is already taken. Please use a different username.')
         create_user()
-    elif new_username in  ['New', 'new']:
+    elif new_username in ['New', 'new']:
         print('You cannot have that username. Pick a different one.')
         create_user()
     else:
