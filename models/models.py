@@ -1,13 +1,12 @@
-#Password Saver Models
+"""This module defines the structure of the tables in the database using sqlalchemy."""
 
 from sqlalchemy import Column, Integer, String, ForeignKey, Binary, create_engine
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-
+#Declase Base for database
 Base = declarative_base()
-engine = create_engine('sqlite:///passwords.sqlite')
-Base.metadata.create_all(engine)
+
 
 class Passwords(Base):
     __tablename__ = 'passwords'
@@ -22,9 +21,6 @@ class Passwords(Base):
         self.site_username = site_username
         self.site_password = site_password
         self.user_id = user_id
-
-    def __repr__(self):
-        return "ID: %d, Site: %s, Username: %s, Password: %s" % (self.id, self.site, self.username, self.password)
 
 
 class User(Base):

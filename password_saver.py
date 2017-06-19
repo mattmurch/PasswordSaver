@@ -1,5 +1,3 @@
-#!p3_vir_env/bin/python3
-
 import os
 import getpass
 import base64
@@ -14,24 +12,24 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 import visidata
 
-
 from models.models import Passwords, User, Base
 
 #Set Up Session
 engine = create_engine('sqlite:///passwords.sqlite')
 Base.metadata.bind = engine
+Base.metadata.create_all(engine)
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
 def hash_pw(unhashed):
-#encrypt password and store encyption in database with username and salt. Take input password and hash it and check against hashed password in database to verify user
-#use password to generate key that encrypts passwords table
+    """Takes a password. Returns its bcrypt hash."""
     hashed = bcrypt.hashpw(unhashed.encode('UTF-8'), bcrypt.gensalt())
     return hashed
 
 
 def verify_hash(password, hashed):
+    """Takes a password and a hash. Returns if the hashed password matches the hash."""
     if bcrypt.hashpw(password.encode('UTF-8'), hashed) == hashed:
         return True
     else:
@@ -39,25 +37,28 @@ def verify_hash(password, hashed):
 
 
 def generate_key(password, salt):
-#Generate a key. Requires a password and a salt
+    """Takes a password and a salt. Returns an encryption/decryption key."""
     kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000, backend=default_backend())
     key = base64.urlsafe_b64encode(kdf.derive(password.encode('UTF-8')))
     return key
 
 
 def encrypt(unencrypted, key):
-#Takes variable to be encrpyted and the key
+    """Takes a string and a key. Returns the encrypted string."""
     f = Fernet(key)
     return f.encrypt(unencrypted.encode('UTF-8'))
 
 
 def decrypt(undecrypted, key):
-#Takes the variable to be decrypted and the key
+    """Takes an encrypted string and the key that string was encrypted with. Returns the decrypted string."""
     f = Fernet(key)
     return f.decrypt(undecrypted).decode('UTF-8')
 
 
 def validate_user(input_un, input_pass):
+    """Takes username and password. Checks User table in database for username and 
+    hashed password pair. Returns True if there is a match.
+    """
     try:
         user = session.query(User).filter_by(user_username=input_un).first()
         hashed_password = user.user_password
@@ -71,9 +72,16 @@ def validate_user(input_un, input_pass):
 
 
 def create_user():
+    """Asks for username. If username already exists in the database, asks for a different 
+    username. If the username is original, asks for password, and creates a new entry in the 
+    User table with the new username, the hashed password, and a randomly generated salt.
+    """
     new_username = input('New Username: ')
     if session.query(exists().where(User.user_username==new_username)).scalar():
         print('This username is already taken. Please use a different username.')
+        create_user()
+    elif new_username == 'New' or new_username == 'new':
+        print('You cannot have that username. Pick a different one.')
         create_user()
     else:
         new_password = getpass.getpass()
@@ -85,6 +93,10 @@ def create_user():
 
 
 def main():
+    """Asks for username and password, and calls validate_user on them. 
+    If validate_user returns true, opens visidata sheet for the user's information.
+    If the given username is 'New' or 'new', calls create_user.
+    """
     print("Enter 'New' To Create New Account")
     current_user_username = input('Username: ')
     if current_user_username == 'New' or current_user_username == 'new':
@@ -94,14 +106,14 @@ def main():
     current_user_password = getpass.getpass()
     if validate_user(current_user_username, current_user_password):
         current_user = session.query(User).filter_by(user_username=current_user_username).first()
-        vs = AddressBookSheet(current_user, current_user_password)
+        vs = PasswordSaverSheet(current_user, current_user_password)
         visidata.run([vs])
     else:
         print('Invalid Login')
         main()
 
 
-class AddressBookSheet(visidata.SqliteSheet):
+class PasswordSaverSheet(visidata.SqliteSheet):
 	
     def __init__(self, current_user, current_user_password):
         super().__init__("passwords", visidata.Path("passwords.sqlite"), "passwords")
