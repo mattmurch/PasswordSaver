@@ -1,10 +1,14 @@
 # PasswordSaver
-Version: 1.00
+Version: 1.0.0
 
 Local encrypted database application designed for storing website usernames and passwords. Supports mulitple user login.
 
-This application uses bcrypt to store hashed passwords for user login.
-Once logged in, information is encrypted with PBKDF2 before it enters the database.
+### Security Specs
+* This application uses bcrypt to store hashed passwords for user login.
+* Once logged in, information is encrypted with PBKDF2 before it enters the database.
+* Encryption key is derived from your login password.
+* Salts are generated randomly and stored along with your login username and password.
+* Currently, there is no way to change your login password, as it is used to encrypt your data.
 
 ![PasswordSaverExample](https://user-images.githubusercontent.com/13307633/27192135-35fe1be4-51c8-11e7-8c02-33936d9b4d21.png)
 
