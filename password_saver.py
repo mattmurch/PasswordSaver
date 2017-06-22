@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
-import os
-import getpass
 import base64
+import getpass
+import os
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import exists
 import bcrypt
 from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import exists
 import visidata
 
-from models.models import Passwords, User, Base
+from .models.models import Passwords, User, Base
+
 
 #Build database and set up session.
 engine = create_engine('sqlite:///passwords.sqlite')
