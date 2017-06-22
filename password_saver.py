@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import base64
 import getpass
 import os
@@ -16,7 +17,7 @@ import visidata
 from .models.models import Passwords, User, Base
 
 
-#Build database and set up session.
+# Build database and set up session
 engine = create_engine('sqlite:///passwords.sqlite')
 Base.metadata.bind = engine
 Base.metadata.create_all(engine)
@@ -172,5 +173,5 @@ class PasswordSaverSheet(visidata.SqliteSheet):
         self.reload()
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

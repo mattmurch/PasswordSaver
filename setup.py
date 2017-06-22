@@ -2,14 +2,14 @@
 
 from setuptools import setup
 
-__version__ = '1.00'
+__version__ = '1.0.0'
 
 setup(name='PasswordSaver',
       version=__version__,
       install_requires=['bcrypt>=3.1.3',
-					'cryptography>=1.8.1',
-					'SQLAlchemy>=1.1.9',
-					'visidata==0.61'],
+                        'cryptography>=1.8.1',
+                        'SQLAlchemy>=1.1.9',
+                        'visidata==0.61'],
       description='local encrypted database application for remembering usernames and passwords',
       long_description=open('README.md').read(),
       author='Matt Murch',
