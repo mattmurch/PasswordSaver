@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import exists
 import visidata
 
-from .models.models import Passwords, User, Base
+from models.models import Passwords, User, Base
 
 
 # Build database and set up session
