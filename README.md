@@ -30,7 +30,7 @@ python setup.py install
 Run this line to start the application
 
 ```
-password_saver.py
+./password_saver.py
 ```
 
 ### Commands
