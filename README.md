@@ -1,5 +1,5 @@
 # PasswordSaver
-Version: 1.0.0
+Version: 1.0.1
 
 Local encrypted database application designed for storing website usernames and passwords. Supports mulitple user login.
 
