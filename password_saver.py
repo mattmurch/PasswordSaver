@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import getpass
 import base64
