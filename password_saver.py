@@ -52,21 +52,21 @@ def decrypt(undecrypted, key):
 
 
 def validate_user(input_un, input_pass):
-    """Takes username and password. Checks User table in database for username and 
+    """Takes username and password. Checks User table in database for username and
     hashed password pair. Returns True if there is a match.
     """
     try:
         user = session.query(User).filter_by(user_username=input_un).first()
         hashed_password = user.user_password
-        return verify_hash(input_pass, hashed_password):
+        return verify_hash(input_pass, hashed_password)
     except:
         print('Validate Failed')
         return False
 
 
 def create_user():
-    """Asks for username. If username already exists in the database, asks for a different 
-    username. If the username is original, asks for password, and creates a new entry in the 
+    """Asks for username. If username already exists in the database, asks for a different
+    username. If the username is original, asks for password, and creates a new entry in the
     User table with the new username, the hashed password, and a randomly generated salt.
     """
     new_username = input('New Username: ')
@@ -86,7 +86,7 @@ def create_user():
 
 
 def main():
-    """Asks for username and password, and calls validate_user on them. 
+    """Asks for username and password, and calls validate_user on them.
     If validate_user returns true, opens visidata sheet for the user's information.
     If the given username is 'New' or 'new', calls create_user.
     """
@@ -110,7 +110,7 @@ class PasswordSaverSheet(visidata.SqliteSheet):
     """This class defines the sheet displayed by visidata and PasswordSaver's custom functions.
     This sheet displays the passwords table for the current user.
     """
-	
+
     def __init__(self, current_user, current_user_password):
         """Initializes variables that are unique to each sheet: the user, user id, user password, and encryption key."""
         super().__init__("passwords", visidata.Path("passwords.sqlite"), "passwords")
@@ -131,7 +131,7 @@ class PasswordSaverSheet(visidata.SqliteSheet):
     def reload(self):
         """Reloads the decrypted values in the passwords table that belong to the current user."""
         super().reload()
-        user = self.current_user   
+        user = self.current_user
         self.rows = [r for r in self.rows if r[4] == self.current_user.id]
         c1 = visidata.Column('Site', getter=self.make_decrypt(user, 1))
         c1.internal_field = 'site'
@@ -142,7 +142,7 @@ class PasswordSaverSheet(visidata.SqliteSheet):
         self.columns = [c1, c2, c3]
 
     def add_entry(self, site, username, password, user_id):
-        """Takes a site, username, password, and user_id. Adds the encrypted site, user, 
+        """Takes a site, username, password, and user_id. Adds the encrypted site, user,
         and password to the passwords table of the user.
         """
         user = self.current_user
@@ -160,7 +160,7 @@ class PasswordSaverSheet(visidata.SqliteSheet):
     def edit_field(self, user_id):
         """Edits the currently selected value, encrypts it, and updates the database."""
         user = self.current_user
-        row_id = self.cursorRow[0]      
+        row_id = self.cursorRow[0]
         new_val = self.editCell(self.cursorVisibleColIndex)
         encrypted_new_val = encrypt(new_val, self.current_key)
         field = self.cursorCol.internal_field
